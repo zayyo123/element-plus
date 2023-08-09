@@ -1,6 +1,8 @@
 import { NOOP } from '@vue/shared'
+// NOOP 常量是一个空函数，用于在需要一个默认或占位函数的情况下使用。
 
 import type { App, Directive } from 'vue'
+// Directive：这是一个 Vue 指令的类型
 import type { SFCInstallWithContext, SFCWithInstall } from './typescript'
 
 export const withInstall = <T, E extends Record<string, any>>(
