@@ -12,33 +12,29 @@ import type Affix from './affix.vue'
 // 定义affix组件的props
 export const affixProps = buildProps({
   /**
-   * @description affix element zIndex value
+   * @description affix元素的zIndex属性
    * */
-  // affix元素的zIndex属性
   zIndex: {
     type: definePropType<ZIndexProperty>([Number, String]),
     default: 100,
   },
   /**
-   * @description target container. (CSS selector)
+   * @description target container. (CSS selector)目标容器。 （CSS 选择器）
    */
-  // target container. (CSS selector)
   target: {
     type: String,
     default: '',
   },
   /**
-   * @description offset distance
+   * @description offset distance偏移距离
    * */
-  // offset distance
   offset: {
     type: Number,
     default: 0,
   },
   /**
-   * @description position of affix
+   * @description position of affix  affix的位置
    * */
-  // position of affix
   position: {
     type: String,
     values: ['top', 'bottom'],
