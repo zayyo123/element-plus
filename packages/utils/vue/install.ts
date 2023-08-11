@@ -10,7 +10,7 @@ export const withInstall = <T, E extends Record<string, any>>(
   extra?: E
 ) => {
   // 为主类和额外的组件添加install方法
-  ;(main as SFCWithInstall<T>).install = (app): void => {
+  (main as SFCWithInstall<T>).install = (app): void => {
     // 遍历主类和额外的组件，将它们添加到app中
     for (const comp of [main,...Object.values(extra?? {})]) {
       app.component(comp.name, comp)
@@ -36,7 +36,7 @@ export const withInstallFunction = <T>(fn: T, name: string) => {
     app.config.globalProperties[name] = fn
   }
 
-  // 返回fn
+  // 返回fn，并且进行类型转换
   return fn as SFCInstallWithContext<T>
 }
 
