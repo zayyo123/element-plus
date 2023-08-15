@@ -41,7 +41,7 @@ export const affixProps = buildProps({
     default: 'top',
   },
 } as const)
-// 定义affix组件的props类型
+
 export type AffixProps = ExtractPropTypes<typeof affixProps>
 
 // 定义affix组件的emits
