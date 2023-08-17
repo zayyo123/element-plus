@@ -1,50 +1,16 @@
 <template>
-  <el-tooltip
-    ref="popperRef"
-    :visible="suggestionVisible"
-    :placement="placement"
-    :fallback-placements="['bottom-start', 'top-start']"
-    :popper-class="[ns.e('popper'), popperClass]"
-    :teleported="teleported"
-    :gpu-acceleration="false"
-    pure
-    manual-mode
-    effect="light"
-    trigger="click"
-    :transition="`${ns.namespace.value}-zoom-in-top`"
-    persistent
-    role="listbox"
-    @before-show="onSuggestionShow"
-    @hide="onHide"
-  >
-    <div
-      ref="listboxRef"
-      :class="[ns.b(), $attrs.class]"
-      :style="styles"
-      role="combobox"
-      aria-haspopup="listbox"
-      :aria-expanded="suggestionVisible"
-      :aria-owns="listboxId"
-    >
-      <el-input
-        ref="inputRef"
-        v-bind="attrs"
-        :clearable="clearable"
-        :disabled="disabled"
-        :name="name"
-        :model-value="modelValue"
-        @input="handleInput"
-        @change="handleChange"
-        @focus="handleFocus"
-        @blur="handleBlur"
-        @clear="handleClear"
-        @keydown.up.prevent="highlight(highlightedIndex - 1)"
-        @keydown.down.prevent="highlight(highlightedIndex + 1)"
-        @keydown.enter="handleKeyEnter"
-        @keydown.tab="close"
-        @keydown.esc="handleKeyEscape"
-        @mousedown="handleMouseDown"
-      >
+  <el-tooltip ref="popperRef" :visible="suggestionVisible" :placement="placement"
+    :fallback-placements="['bottom-start', 'top-start']" :popper-class="[ns.e('popper'), popperClass]"
+    :teleported="teleported" :gpu-acceleration="false" pure manual-mode effect="light" trigger="click"
+    :transition="`${ns.namespace.value}-zoom-in-top`" persistent role="listbox" @before-show="onSuggestionShow"
+    @hide="onHide">
+    <div ref="listboxRef" :class="[ns.b(), $attrs.class]" :style="styles" role="combobox" aria-haspopup="listbox"
+      :aria-expanded="suggestionVisible" :aria-owns="listboxId">
+      <el-input ref="inputRef" v-bind="attrs" :clearable="clearable" :disabled="disabled" :name="name"
+        :model-value="modelValue" @input="handleInput" @change="handleChange" @focus="handleFocus" @blur="handleBlur"
+        @clear="handleClear" @keydown.up.prevent="highlight(highlightedIndex - 1)"
+        @keydown.down.prevent="highlight(highlightedIndex + 1)" @keydown.enter="handleKeyEnter" @keydown.tab="close"
+        @keydown.esc="handleKeyEscape" @mousedown="handleMouseDown">
         <template v-if="$slots.prepend" #prepend>
           <slot name="prepend" />
         </template>
@@ -60,37 +26,21 @@
       </el-input>
     </div>
     <template #content>
-      <div
-        ref="regionRef"
-        :class="[ns.b('suggestion'), ns.is('loading', suggestionLoading)]"
-        :style="{
-          [fitInputWidth ? 'width' : 'minWidth']: dropdownWidth,
-          outline: 'none',
-        }"
-        role="region"
-      >
-        <el-scrollbar
-          :id="listboxId"
-          tag="ul"
-          :wrap-class="ns.be('suggestion', 'wrap')"
-          :view-class="ns.be('suggestion', 'list')"
-          role="listbox"
-        >
+      <div ref="regionRef" :class="[ns.b('suggestion'), ns.is('loading', suggestionLoading)]" :style="{
+        [fitInputWidth ? 'width' : 'minWidth']: dropdownWidth,
+        outline: 'none',
+      }" role="region">
+        <el-scrollbar :id="listboxId" tag="ul" :wrap-class="ns.be('suggestion', 'wrap')"
+          :view-class="ns.be('suggestion', 'list')" role="listbox">
           <li v-if="suggestionLoading">
             <el-icon :class="ns.is('loading')">
               <Loading />
             </el-icon>
           </li>
           <template v-else>
-            <li
-              v-for="(item, index) in suggestions"
-              :id="`${listboxId}-item-${index}`"
-              :key="index"
-              :class="{ highlighted: highlightedIndex === index }"
-              role="option"
-              :aria-selected="highlightedIndex === index"
-              @click="handleSelect(item)"
-            >
+            <li v-for="(item, index) in suggestions" :id="`${listboxId}-item-${index}`" :key="index"
+              :class="{ highlighted: highlightedIndex === index }" role="option"
+              :aria-selected="highlightedIndex === index" @click="handleSelect(item)">
               <slot :item="item">{{ item[valueKey] }}</slot>
             </li>
           </template>
@@ -136,44 +86,90 @@ defineOptions({
   inheritAttrs: false,
 })
 
+// 获取props和emits
 const props = defineProps(autocompleteProps)
 const emit = defineEmits(autocompleteEmits)
 
+// 获取attrs
 const attrs = useAttrs()
 const rawAttrs = useRawAttrs()
 const disabled = useFormDisabled()
 const ns = useNamespace('autocomplete')
 
+// 定义inputRef
 const inputRef = ref<InputInstance>()
+// 定义regionRef
 const regionRef = ref<HTMLElement>()
+// 定义popperRef
 const popperRef = ref<TooltipInstance>()
+// 定义listboxRef
 const listboxRef = ref<HTMLElement>()
 
+// 定义readonly
 let readonly = false
+// 定义ignoreFocusEvent
 let ignoreFocusEvent = false
+// 定义suggestions
 const suggestions = ref<AutocompleteData>([])
+// 定义highlightedIndex
 const highlightedIndex = ref(-1)
+// 定义dropdownWidth
 const dropdownWidth = ref('')
+// 定义activated
 const activated = ref(false)
+// 定义suggestionDisabled
 const suggestionDisabled = ref(false)
+// 定义loading
 const loading = ref(false)
 
+// 定义listboxId
 const listboxId = computed(() => ns.b(String(generateId())))
+// 定义styles
 const styles = computed(() => rawAttrs.style as StyleValue)
 
+// 定义suggestionVisible
 const suggestionVisible = computed(() => {
   const isValidData = suggestions.value.length > 0
   return (isValidData || loading.value) && activated.value
 })
 
+// 定义suggestionLoading
 const suggestionLoading = computed(() => !props.hideLoading && loading.value)
 
+// 定义refInput
 const refInput = computed<HTMLInputElement[]>(() => {
   if (inputRef.value) {
     return Array.from<HTMLInputElement>(
       inputRef.value.$el.querySelectorAll('input')
     )
   }
+  return []
+})
+// 定义listboxId属性
+const listboxId = computed(() => ns.b(String(generateId())))
+// 定义styles属性
+const styles = computed(() => rawAttrs.style as StyleValue)
+
+// 定义suggestionVisible属性
+const suggestionVisible = computed(() => {
+  // 判断suggestions数组长度是否大于0
+  const isValidData = suggestions.value.length > 0
+  // 返回是否有数据或者loading状态下，activated状态下
+  return (isValidData || loading.value) && activated.value
+})
+
+// 定义suggestionLoading属性
+const suggestionLoading = computed(() => !props.hideLoading && loading.value)
+
+// 定义refInput属性
+const refInput = computed<HTMLInputElement[]>(() => {
+  // 如果inputRef属性存在，则返回inputRef属性的所有子元素
+  if (inputRef.value) {
+    return Array.from<HTMLInputElement>(
+      inputRef.value.$el.querySelectorAll('input')
+    )
+  }
+  // 否则返回空数组
   return []
 })
 
@@ -347,11 +343,11 @@ const highlight = (index: number) => {
     suggestion.scrollTop -= scrollHeight
   }
   highlightedIndex.value = index
-  // TODO: use Volar generate dts to fix it.
-  ;(inputRef.value as any).ref!.setAttribute(
-    'aria-activedescendant',
-    `${listboxId.value}-item-${highlightedIndex.value}`
-  )
+    // TODO: use Volar generate dts to fix it.
+    ; (inputRef.value as any).ref!.setAttribute(
+      'aria-activedescendant',
+      `${listboxId.value}-item-${highlightedIndex.value}`
+    )
 }
 
 onClickOutside(listboxRef, () => {
@@ -360,13 +356,13 @@ onClickOutside(listboxRef, () => {
 
 onMounted(() => {
   // TODO: use Volar generate dts to fix it.
-  ;(inputRef.value as any).ref!.setAttribute('role', 'textbox')
-  ;(inputRef.value as any).ref!.setAttribute('aria-autocomplete', 'list')
-  ;(inputRef.value as any).ref!.setAttribute('aria-controls', 'id')
-  ;(inputRef.value as any).ref!.setAttribute(
-    'aria-activedescendant',
-    `${listboxId.value}-item-${highlightedIndex.value}`
-  )
+  ; (inputRef.value as any).ref!.setAttribute('role', 'textbox')
+    ; (inputRef.value as any).ref!.setAttribute('aria-autocomplete', 'list')
+    ; (inputRef.value as any).ref!.setAttribute('aria-controls', 'id')
+    ; (inputRef.value as any).ref!.setAttribute(
+      'aria-activedescendant',
+      `${listboxId.value}-item-${highlightedIndex.value}`
+    )
   // get readonly attr
   readonly = (inputRef.value as any).ref!.hasAttribute('readonly')
 })
