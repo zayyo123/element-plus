@@ -53,8 +53,8 @@ const { Close } = TypeComponents
 
 defineOptions({
   name: 'ElAlert',
-// 定义emits变量
-defineEmits(alertEmits)
+  // 定义emits变量
+  defineEmits(alertEmits)
 // 定义slots变量
 const slots = useSlots()
 
@@ -69,41 +69,46 @@ const iconComponent = computed(() => TypeComponentsMap[props.type])
 
 // 定义iconClass变量
 const iconClass = computed(() => [
-  ns.e('icon'),
-  { [ns.is('big')]:!!props.description ||!!slots.default },
-])
+    ns.e('icon'),
+    { [ns.is('big')]: !!props.description || !!slots.default },
+  ])
 
 // 定义isBoldTitle变量
 const isBoldTitle = computed(() => {
-  return { [ns.is('bold')]: props.description || slots.default }
-})
+    return { [ns.is('bold')]: props.description || slots.default }
+  })
 
 const props = defineProps(alertProps)
 const emit = defineEmits(alertEmits)
 const slots = useSlots()
 
+// 定义一个变量ns，用于记录alert组件的命名空间
 const ns = useNamespace('alert')
 
+// 定义一个变量visible，用于记录alert组件的可见性
 const visible = ref(true)
 
+// 定义一个变量iconComponent，用于记录alert组件的图标组件
 const iconComponent = computed(() => TypeComponentsMap[props.type])
 
+// 定义一个变量iconClass，用于记录alert组件的图标类
 const iconClass = computed(() => [
-  ns.e('icon'),
-  { [ns.is('big')]: !!props.description || !!slots.default },
-])
+    ns.e('icon'),
+    { [ns.is('big')]: !!props.description || !!slots.default },
+  ])
 
+// 定义一个变量isBoldTitle，用于记录alert组件的标题是否加粗
 const isBoldTitle = computed(() => {
-  return { [ns.is('bold')]: props.description || slots.default }
-})
+    return { [ns.is('bold')]: props.description || slots.default }
+  })
 
 // 定义close函数
 const close = (evt: MouseEvent) => {
-  // 设置visible变量为false
-  visible.value = false
-  // 触发close事件
-  emit('close', evt)
-}
+    // 设置visible变量为false
+    visible.value = false
+    // 触发close事件
+    emit('close', evt)
+  }
 </script> -->
 <template>
   <div class="el-alert">
@@ -147,10 +152,12 @@ const close = (evt: MouseEvent) => {
     padding: 10px 15px;
     border-radius: 4px;
     background-color: #f2f2f2;
-    & > * {
+
+    &>* {
       margin-left: 10px;
     }
   }
+
   &__title {
     font-size: 16px;
     line-height: 1.5;
@@ -159,10 +166,12 @@ const close = (evt: MouseEvent) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    & > * {
+
+    &>* {
       margin-left: 10px;
     }
   }
+
   &__description {
     font-size: 14px;
     line-height: 1.5;
@@ -170,10 +179,12 @@ const close = (evt: MouseEvent) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    & > * {
+
+    &>* {
       margin-left: 10px;
     }
   }
+
   &__closebtn {
     position: absolute;
     right: 10px;
@@ -182,17 +193,20 @@ const close = (evt: MouseEvent) => {
     height: 20px;
     border-radius: 50%;
     background-color: #c0c4cc;
-    & > * {
+
+    &>* {
       margin-left: 10px;
     }
   }
+
   &__content {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px 15px;
     border-radius: 4px;
     background-color: #f2f2f2;
-    & > * {
+
+    &>* {
       margin-left: 10px;
     }
   }
